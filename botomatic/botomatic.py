@@ -37,6 +37,17 @@ class TBot(object):
 
         self.run()
 
+    def handle_tweets(self, user_id, new_only=True):
+        if new_only and self.history.get('last_tweet_id', None):
+            tweets = self.api.user_timeline(user_id=user_id, since_id=self.history['last_tweet_id'])
+        else:
+            tweets = self.api.user_timeline(user_id=user_id)
+
+        if tweets:
+            self.history['last_tweet_id'] = tweets[0].id
+
+        return tweets
+
     def handle_DMs(self, new_only=True):
         if new_only and self.history.get('last_dm_id', None):
             dms = self.api.direct_messages(since_id=self.history['last_dm_id'])
